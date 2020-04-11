@@ -26,7 +26,7 @@ class StatService implements StatServiceInterface
         $stat->save();
     }
 
-    private function getCountryByName(string $name): Countries
+    private function getCountryByName(string $name): ?Countries
     {
         return Countries::where('name', '=', $name)->first();
     }
@@ -60,7 +60,7 @@ class StatService implements StatServiceInterface
 
     public function delete(int $id): void
     {
-        // TODO: Implement delete() method.
+        CovidStat::destroy($id);
     }
 
     public function get(int $id): ?CovidStat
@@ -68,9 +68,15 @@ class StatService implements StatServiceInterface
         return CovidStat::find($id);
     }
 
-    public function getByCountry(string $country): ?Collection
+    public function getByCountry(string $countryName): ?Collection
     {
-        // TODO: Implement getByCountry() method.
+        $country = $this->getCountryByName($countryName);
+        if (!$country) {
+            throw new \InvalidArgumentException('Country does not exists');
+        }
+
+        $countryId = $country->getOriginal('id');
+        return CovidStat::where('country_id', '=', $countryId)->get();
     }
 
 }

@@ -8,9 +8,9 @@ use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CovidUpdate extends Command
+class CovidDelete extends Command
 {
-    protected $signature = 'covid:update {id} {ill} {death} {good}';
+    protected $signature = 'covid:delete {id}';
     private $covidStatService;
 
     public function __construct(StatServiceInterface $statService)
@@ -21,21 +21,11 @@ class CovidUpdate extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-
-        $countriesList = $this->covidStatService->getCountries()->pluck('name')->toArray();
-        $country = $this->choice('Country name', $countriesList);
-
         $id = $input->getArgument('id');
-        $ill = $input->getArgument('ill');
-        $death = $input->getArgument('death');
-        $good = $input->getArgument('good');
-
-        $data = compact('ill', 'death', 'good');
-        $data['country_name'] = $country;
 
         try {
-            $this->covidStatService->update($id, $data);
-            $this->info('Data updated');
+            $this->covidStatService->delete($id);
+            $this->info('Data deleted');
         } catch (\InvalidArgumentException $exception) {
             $this->error('ERROR: '. $exception->getMessage());
         }
@@ -43,3 +33,11 @@ class CovidUpdate extends Command
         return 0;
     }
 }
+
+
+
+
+
+
+
+
